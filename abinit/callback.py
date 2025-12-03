@@ -5,21 +5,27 @@ def main():
     comm = MPI.COMM_WORLD
     parent = MPI.Comm.Get_parent()
     rank = comm.Get_rank()
-    
+
+    def mprint(text):
+        if rank == 0:
+            print(text)
+
     if parent == MPI.COMM_NULL:
-        print("[DFT] No parent communicator found. Exiting F.")
+        mprint("    [callback]: No parent communicator found. Exiting F.")
         return
 
-    print(f"[DFT rank {rank}] Waiting for signal from parent...")
-    signal = parent.recv(source=rank, tag=0)
-    print(f"[DFT rank {rank}] Received signal: {signal}")
-
-   # Reply
-    response = f"ACK from child {rank}"
+    mprint(f"    [callback]: After running the DFT, we are now at the DMFT part, so we contact modest and wait")
+    response = "Do DMFT"
     parent.send(response, dest=rank, tag=1)
 
-    parent.Barrier()
-    parent.Disconnect()
+
+    mprint(f"    [callback]: Waiting for signal from parent...")
+    signal = parent.recv(source=rank, tag=0)
+    mprint(f"    [callback]: Received signal: {signal}")
+
+
+    # parent.Barrier()
+    # parent.Disconnect()
 
 if __name__ == "__main__":
     main()

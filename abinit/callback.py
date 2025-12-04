@@ -24,7 +24,8 @@ def main():
     mprint(f"    [callback]: Received signal: {signal}")
 
 
-    # parent.Barrier()
+    if signal =="Finish DFT":
+        parent.Barrier()
     # parent.Disconnect()
 
 if __name__ == "__main__":

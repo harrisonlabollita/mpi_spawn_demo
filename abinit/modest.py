@@ -1,6 +1,7 @@
 from mpi4py import MPI
 import sys
-
+import os, sysconfig
+libpy = sysconfig.get_config_var('LIBDIR') + '/'+ sysconfig.get_config_var('LDLIBRARY')
 
 def main():
     comm = MPI.COMM_WORLD
@@ -17,7 +18,7 @@ def main():
     # Spawn a child for each parent rank
     # All ranks must call Spawn collectively
     mprint(f"[Modest]: Calling Spawn of DFT")
-    intercomm = comm.Spawn("a.out", args=["/mnt/sw/nix/store/7kfpfhj104s5hynnhr5jzsrm25p4vwla-python-3.11.11-view/lib/libpython3.11.so.1.0", "callback.py"], maxprocs=size)
+    intercomm = comm.Spawn("a.out", args=[libpy, "callback.py"], maxprocs=size)
 
     mprint(f"[Modest]: Started the intercomm")
     sys.stdout.flush()
@@ -49,7 +50,7 @@ def main():
 
     # Intercomm collectives: both groups must participate
     intercomm.Barrier()
-    intercomm.Disconnect()
+    # intercomm.Disconnect()
     mprint(f"[Modest]: [Parent rank {rank}] dft_code has finished")
     sys.stdout.flush()
 

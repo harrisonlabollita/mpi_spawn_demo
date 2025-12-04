@@ -26,10 +26,11 @@ def main():
     mprint(f"[Modest]: Waiting for DFT code")
     sys.stdout.flush()
 
-    try:
-        intercomm.Disconnect()
-    except MPI.Exception:
-        print("ok, rank = %s, error mpi comm trapped. DFT ended uncleanly"%rank)
+    # Wait for the child to disconnect ?
+    #try:
+    intercomm.Disconnect()
+    #.Exception:
+    #    print("ok, rank = %s, error mpi comm trapped. DFT ended uncleanly"%rank)
 
     mprint(f"[Modest]: [Parent rank {rank}] dft_code has finished")
     sys.stdout.flush()

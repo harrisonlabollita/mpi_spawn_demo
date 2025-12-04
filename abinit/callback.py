@@ -26,7 +26,7 @@ def main():
 
     if signal =="Finish DFT":
         parent.Barrier()
-    # parent.Disconnect()
+        parent.Disconnect()
 
 if __name__ == "__main__":
     main()

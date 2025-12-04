@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     MPI_Comm parent;
     MPI_Comm_get_parent(&parent);
     if (parent != MPI_COMM_NULL) {
-         //MPI_Comm_disconnect(&parent);
+         MPI_Comm_disconnect(&parent);
     }
 
     // Finalize MPI if we initialized it

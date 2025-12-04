@@ -25,8 +25,15 @@ def main():
             # wrapper.sh
             # Run the actual MPI child program
             "$@"
-            # Signal completion by creating a marker file
-            touch ./qe_is_done_${OMPI_COMM_WORLD_RANK:-0}
+EXIT_CODE=$?
+
+# Signal completion by creating a marker file
+if [ $EXIT_CODE -eq 0 ]; then
+    touch ./qe_is_done_${OMPI_COMM_WORLD_RANK:-0}
+else
+    touch ./qe_has_failed_${OMPI_COMM_WORLD_RANK:-0}
+fi
+        exit 0 #$EXIT_CODE
          """)
     comm.Barrier()
     args = ["./a.out"]
@@ -40,26 +47,16 @@ def main():
 
     # Poll for completion (wait for all ranks)
     lock_file = f"./qe_is_done_{rank}"
-    while not os.path.exists(lock_file):
+    lock_file_failed = f"./qe_has_failed_{rank}"
+    while not os.path.exists(lock_file) and not os.path.exists(lock_file_failed):
         time.sleep(1)
-    os.remove(lock_file)
+    print("Rank= %s. before check file"%rank)
+    if os.path.exists(lock_file_failed):
+        print("DFT FAILED on rank %s!!!"%rank)
+        os.remove(lock_file_failed)
+    else:
+        os.remove(lock_file)
 
-    # marker_files = [f"/tmp/child_done_{i}" for i in range(size)]
-
-    # while True:
-        # all_done = all(os.path.exists(f) for f in marker_files)
-        # if all_done:
-            # # Clean up marker files
-            # for f in marker_files:
-              # pass
-              # os.remove(f)
-            # break
-        # time.sleep(1)
-
-    #try:
-    #    intercomm.Disconnect()
-    #except MPI.Exception:
-    #    print("ok, rank = %s, error mpi comm trapped. DFT ended uncleanly"%rank)
 
     mprint(f"[Modest]: [Parent rank {rank}] dft_code has finished")
     sys.stdout.flush()

@@ -50,7 +50,7 @@ def main():
 
     # Intercomm collectives: both groups must participate
     intercomm.Barrier()
-    # intercomm.Disconnect()
+    intercomm.Disconnect()
     mprint(f"[Modest]: [Parent rank {rank}] dft_code has finished")
     sys.stdout.flush()
 

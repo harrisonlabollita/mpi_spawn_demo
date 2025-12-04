@@ -4,9 +4,9 @@
 int main(int argc, char* argv[]) {
 
     // Check if MPI is already initialized
-    int initialized;
-    MPI_Initialized(&initialized);
-    
+    int initialized=0;
+    //MPI_Initialized(&initialized);
+
     if (!initialized) {
         MPI_Init(&argc, &argv);
     }
@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
     // Each rank contributes its own rank number to the sum
     int local_value = rank+1;
-    // std::cout << "I am rank= " << rank+1 << " with local_value = " << local_value << std::endl;
+    std::cout << "I am rank= " << rank+1 << " with local_value = " << local_value << std::endl;
 
     int total_sum = 0;
 
@@ -27,6 +27,13 @@ int main(int argc, char* argv[]) {
     // Print result on master rank
     if (rank == 0) {
         std::cout << "Sum of all ranks: " << total_sum << std::endl;
+    }
+
+    // Disconnect
+    MPI_Comm parent;
+    MPI_Comm_get_parent(&parent);
+    if (parent != MPI_COMM_NULL) {
+         // MPI_Comm_disconnect(&parent);
     }
 
     // Finalize MPI if we initialized it
